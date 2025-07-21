@@ -58,7 +58,7 @@ class TestT3_5_QuantumErrorCorrection(VerificationTest):
     def _create_kraus_operators(self, error_probs: List[float]) -> List[np.ndarray]:
         """创建Kraus算符"""
         kraus_ops = []
-        for i, (prob, pauli) in enumerate(zip(error_probs, self.pauli_ops)):
+        for prob, pauli in zip(error_probs, self.pauli_ops):
             if prob > 0:
                 kraus_ops.append(np.sqrt(prob) * pauli)
         return kraus_ops
@@ -81,7 +81,7 @@ class TestT3_5_QuantumErrorCorrection(VerificationTest):
     def _calculate_fidelity(self, state1: np.ndarray, state2: np.ndarray) -> float:
         """计算保真度"""
         overlap = np.vdot(state1, state2)
-        return abs(overlap)**2
+        return float(abs(overlap)**2)
     
     def test_error_model_establishment(self):
         """测试错误模型建立 - 验证检查点1"""
@@ -732,7 +732,7 @@ class TestT3_5_QuantumErrorCorrection(VerificationTest):
                 (-1, -1): "IXI",
                 (1, -1): "IIX"
             }
-            correction_string = correction_map.get(syndrome, "III")
+            correction_string = correction_map.get(syndrome) or "III"
             correction_op = self._tensor_product_pauli(correction_string)
             corrected = correction_op @ corrupted
             
