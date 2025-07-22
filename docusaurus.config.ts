@@ -202,7 +202,7 @@ const config: Config = {
           items: [
             {
               label: 'GitHub',
-              href: 'https://github.com/loning/binarymath',
+              href: 'https://github.com/loning/the-binarymath',
             },
           ],
         },
