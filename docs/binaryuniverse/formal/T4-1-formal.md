@@ -11,8 +11,9 @@
 **Definition 1** (φ-拓扑空间): 设 $\Phi_n = \{s \in \{0,1\}^n : \forall i, s_i = s_{i+1} = 1 \implies \bot\}$ 为n位φ-表示状态空间。
 
 **Definition 2** (φ-度量): 在φ-拓扑空间上定义度量
-$$d_\phi(s_1, s_2) = \sum_{i=0}^{n-1} \frac{|s_1^{(i)} - s_2^{(i)}|}{2^{i+1}} + \lambda \cdot \mathbb{I}_{违约}(s_1, s_2)$$
-
+$$
+d_\phi(s_1, s_2) = \sum_{i=0}^{n-1} \frac{|s_1^{(i)} - s_2^{(i)}|}{2^{i+1}} + \lambda \cdot \mathbb{I}_{违约}(s_1, s_2)
+$$
 其中 $\lambda$ 为约束惩罚参数，$\mathbb{I}_{违约}$ 为约束违反指示函数。
 
 **Definition 3** (拓扑结构层次):
