@@ -212,7 +212,7 @@ Any linear constraint can be represented as boundary conditions of the Collapse 
 **Theorem 4.2** (Universal Approximation Ratio Theorem):
 For any knapsack variant, the Collapse algorithm's approximation ratio is at least:
 ```
-ρ ≥ 1 - 1/√φ^d
+ρ ≥ 1/√φ^d
 ```
 
 Where d is the problem's "dimension" (constraint complexity).
@@ -508,7 +508,7 @@ Experimental data saved in:
 2. Multiple decay: `ζ^(k) = ζ^(1) · φ^(-k)`
 3. Group probability: `P(i|g) = exp(ζᵢvᵢ)/Σexp(ζⱼvⱼ)`
 4. High-dimensional tension: `ζ_eff = ||ζ⃗||₂`
-5. Approximation ratio lower bound: `ρ ≥ 1 - 1/√φ^d`
+5. Approximation ratio lower bound: `ρ ≥ 1/√φ^d`
 
 ---
 

@@ -726,7 +726,7 @@ This report presents a comprehensive comparison between the novel CollapseGPT al
 
 5. **Mathematical Validation**
    - Critical exponent s = 0.5 optimal for all scales
-   - Approximation bound 1 - 1/√φ ≈ 0.786 validated
+   - Approximation bound 1/√φ ≈ 0.786 validated
    - No violations of theoretical predictions
    - Time complexity scaling exact to theory
 
