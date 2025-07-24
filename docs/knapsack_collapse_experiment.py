@@ -17,9 +17,15 @@ from tqdm import tqdm
 import warnings
 warnings.filterwarnings('ignore')
 
-# 设置中文字体
-plt.rcParams['font.sans-serif'] = ['Arial Unicode MS', 'SimHei']
+# 设置中文字体和绘图参数
+plt.rcParams['font.sans-serif'] = ['Arial Unicode MS', 'SimHei', 'Microsoft YaHei']
 plt.rcParams['axes.unicode_minus'] = False
+plt.rcParams['font.size'] = 10
+plt.rcParams['axes.titlesize'] = 12
+plt.rcParams['axes.labelsize'] = 11
+plt.rcParams['xtick.labelsize'] = 9
+plt.rcParams['ytick.labelsize'] = 9
+plt.rcParams['legend.fontsize'] = 10
 sns.set_style("whitegrid")
 
 
@@ -280,8 +286,8 @@ class ComprehensiveVisualizer:
     
     def plot_all_comparisons(self, df: pd.DataFrame, save_path: str = 'knapsack_comprehensive_analysis.png'):
         """绘制所有参数的对比图"""
-        fig = plt.figure(figsize=(20, 24))
-        gs = fig.add_gridspec(6, 3, hspace=0.3, wspace=0.3)
+        fig = plt.figure(figsize=(28, 32))
+        gs = fig.add_gridspec(6, 3, hspace=0.55, wspace=0.45)
         
         # 计算统计数据
         df_stats = df.groupby('n_items').agg({
@@ -311,11 +317,12 @@ class ComprehensiveVisualizer:
                     fmt='s-', label='CollapseGPT', capsize=5, markersize=8)
         ax1.set_xscale('log')
         ax1.set_yscale('log')
-        ax1.set_xlabel('Problem Size n')
-        ax1.set_ylabel('Runtime (seconds)')
-        ax1.set_title('Algorithm Runtime Comparison')
-        ax1.legend()
+        ax1.set_xlabel('Problem Size n', fontsize=12)
+        ax1.set_ylabel('Runtime (seconds)', fontsize=12)
+        ax1.set_title('Algorithm Runtime Comparison', fontsize=14, fontweight='bold')
+        ax1.legend(fontsize=11)
         ax1.grid(True, alpha=0.3)
+        ax1.tick_params(labelsize=10)
         
         # 2. 迭代次数对比
         ax2 = fig.add_subplot(gs[0, 1])
@@ -325,14 +332,15 @@ class ComprehensiveVisualizer:
                 label='DP Iterations', color='blue', alpha=0.7)
         ax2.bar(x + width/2, df_stats['collapse_iterations']['mean'], width,
                 label='Collapse Iterations', color='green', alpha=0.7)
-        ax2.set_xlabel('Problem Size n')
-        ax2.set_ylabel('Number of Iterations')
-        ax2.set_title('Algorithm Iterations Comparison')
+        ax2.set_xlabel('Problem Size n', fontsize=12)
+        ax2.set_ylabel('Number of Iterations', fontsize=12)
+        ax2.set_title('Algorithm Iterations Comparison', fontsize=14, fontweight='bold')
         ax2.set_xticks(x)
-        ax2.set_xticklabels(n_values)
-        ax2.legend()
+        ax2.set_xticklabels(n_values, fontsize=10)
+        ax2.legend(fontsize=11)
         ax2.set_yscale('log')
         ax2.grid(True, alpha=0.3)
+        ax2.tick_params(labelsize=10)
         
         # 3. 内存使用对比
         ax3 = fig.add_subplot(gs[0, 2])
@@ -340,45 +348,51 @@ class ComprehensiveVisualizer:
                 label='DP Memory Usage', markersize=8, linewidth=2)
         ax3.plot(n_values, df_stats['collapse_memory']['mean'], 's-',
                 label='Collapse Memory Usage', markersize=8, linewidth=2)
-        ax3.set_xlabel('Problem Size n')
-        ax3.set_ylabel('Memory Usage (MB)')
-        ax3.set_title('Memory Usage Comparison')
-        ax3.legend()
+        ax3.set_xlabel('Problem Size n', fontsize=12)
+        ax3.set_ylabel('Memory Usage (MB)', fontsize=12)
+        ax3.set_title('Memory Usage Comparison', fontsize=14, fontweight='bold')
+        ax3.legend(fontsize=11)
         ax3.grid(True, alpha=0.3)
+        ax3.tick_params(labelsize=10)
         
         # 4. 近似比分布
         ax4 = fig.add_subplot(gs[1, 0])
         ax4.hist(df['approx_ratio'], bins=50, edgecolor='black', alpha=0.7, color='skyblue')
-        ax4.axvline(1 - 1/np.sqrt((1 + np.sqrt(5))/2), color='red', 
-                   linestyle='--', linewidth=2, label=f'Theoretical Bound: 0.786')
+        phi = (1 + np.sqrt(5))/2
+        theoretical_bound = 1/np.sqrt(phi)
+        ax4.axvline(theoretical_bound, color='red', 
+                   linestyle='--', linewidth=2, label=f'Theoretical Bound: {theoretical_bound:.3f}')
         ax4.axvline(df['approx_ratio'].mean(), color='green',
                    linestyle='-', linewidth=2, label=f'Experimental Mean: {df["approx_ratio"].mean():.3f}')
-        ax4.set_xlabel('Approximation Ratio')
-        ax4.set_ylabel('Frequency')
-        ax4.set_title('CollapseGPT Approximation Ratio Distribution')
-        ax4.legend()
+        ax4.set_xlabel('Approximation Ratio', fontsize=12)
+        ax4.set_ylabel('Frequency', fontsize=12)
+        ax4.set_title('CollapseGPT Approximation Ratio Distribution', fontsize=14, fontweight='bold')
+        ax4.legend(fontsize=10)
         ax4.grid(True, alpha=0.3)
+        ax4.tick_params(labelsize=10)
         
         # 5. 加速比随规模变化
         ax5 = fig.add_subplot(gs[1, 1])
         ax5.errorbar(n_values, df_stats['speedup']['mean'],
                     yerr=df_stats['speedup']['std'],
                     fmt='D-', capsize=5, markersize=8, color='purple')
-        ax5.set_xlabel('Problem Size n')
-        ax5.set_ylabel('Speedup')
-        ax5.set_title('CollapseGPT Speedup over DP')
+        ax5.set_xlabel('Problem Size n', fontsize=12)
+        ax5.set_ylabel('Speedup', fontsize=12)
+        ax5.set_title('CollapseGPT Speedup over DP', fontsize=14, fontweight='bold')
         ax5.grid(True, alpha=0.3)
         ax5.set_xscale('log')
+        ax5.tick_params(labelsize=10)
         
         # 6. 价值损失分析
         ax6 = fig.add_subplot(gs[1, 2])
         ax6.errorbar(n_values, df_stats['value_loss']['mean'],
                     yerr=df_stats['value_loss']['std'],
                     fmt='o-', capsize=5, markersize=8, color='red')
-        ax6.set_xlabel('Problem Size n')
-        ax6.set_ylabel('Average Value Loss')
-        ax6.set_title('CollapseGPT Value Loss')
+        ax6.set_xlabel('Problem Size n', fontsize=12)
+        ax6.set_ylabel('Average Value Loss', fontsize=12)
+        ax6.set_title('CollapseGPT Value Loss', fontsize=14, fontweight='bold')
         ax6.grid(True, alpha=0.3)
+        ax6.tick_params(labelsize=10)
         
         # 7. 选中物品数量对比
         ax7 = fig.add_subplot(gs[2, 0])
@@ -387,13 +401,14 @@ class ComprehensiveVisualizer:
                 label='DP Selected', color='blue', alpha=0.7)
         ax7.bar(x + width/2, df_stats['collapse_items']['mean'], width,
                 label='Collapse Selected', color='green', alpha=0.7)
-        ax7.set_xlabel('Problem Size n')
-        ax7.set_ylabel('Number of Selected Items')
-        ax7.set_title('Selected Items Comparison')
+        ax7.set_xlabel('Problem Size n', fontsize=12)
+        ax7.set_ylabel('Number of Selected Items', fontsize=12)
+        ax7.set_title('Selected Items Comparison', fontsize=14, fontweight='bold')
         ax7.set_xticks(x)
-        ax7.set_xticklabels(n_values)
-        ax7.legend()
+        ax7.set_xticklabels(n_values, fontsize=10)
+        ax7.legend(fontsize=10)
         ax7.grid(True, alpha=0.3)
+        ax7.tick_params(labelsize=10)
         
         # 8. 时间复杂度验证
         ax8 = fig.add_subplot(gs[2, 1])
@@ -406,11 +421,12 @@ class ComprehensiveVisualizer:
         ax8.loglog(n_values, df_stats['collapse_time']['mean'], 's-', label='Collapse Measured', markersize=8)
         ax8.loglog(n_theory, dp_theory, '--', alpha=0.5, label='O(nW) Theory')
         ax8.loglog(n_theory, collapse_theory, '--', alpha=0.5, label='O(n log n) Theory')
-        ax8.set_xlabel('Problem Size n')
-        ax8.set_ylabel('Runtime (seconds)')
-        ax8.set_title('Time Complexity Verification')
-        ax8.legend()
+        ax8.set_xlabel('Problem Size n', fontsize=12)
+        ax8.set_ylabel('Runtime (seconds)', fontsize=12)
+        ax8.set_title('Time Complexity Verification', fontsize=14, fontweight='bold')
+        ax8.legend(fontsize=10)
         ax8.grid(True, alpha=0.3)
+        ax8.tick_params(labelsize=10)
         
         # 9. 近似比vs规模的箱线图
         ax9 = fig.add_subplot(gs[2, 2])
@@ -418,13 +434,14 @@ class ComprehensiveVisualizer:
         bp = ax9.boxplot(data_to_plot, labels=n_values, patch_artist=True)
         for patch in bp['boxes']:
             patch.set_facecolor('lightblue')
-        ax9.axhline(1 - 1/np.sqrt((1 + np.sqrt(5))/2), color='red',
+        ax9.axhline(theoretical_bound, color='red',
                    linestyle='--', linewidth=2, label='Theoretical Bound')
-        ax9.set_xlabel('Problem Size n')
-        ax9.set_ylabel('Approximation Ratio')
-        ax9.set_title('Approximation Ratio Distribution by Size')
-        ax9.legend()
+        ax9.set_xlabel('Problem Size n', fontsize=12)
+        ax9.set_ylabel('Approximation Ratio', fontsize=12)
+        ax9.set_title('Approximation Ratio Distribution by Size', fontsize=14, fontweight='bold')
+        ax9.legend(fontsize=10)
         ax9.grid(True, alpha=0.3)
+        ax9.tick_params(labelsize=10)
         
         # 10-12. 典型案例分析
         # 找出最好、平均、最差的案例
@@ -459,12 +476,13 @@ class ComprehensiveVisualizer:
             bars2 = ax.bar(x + width/2, weights, width, label='Weight',
                            color=['green' if cs else 'lightgreen' for cs in collapse_selected])
             
-            ax.set_xlabel('Item ID')
-            ax.set_ylabel('Value/Weight')
-            ax.set_title(f'{title}\nApprox Ratio: {case["approx_ratio"]:.3f}')
+            ax.set_xlabel('Item ID', fontsize=11)
+            ax.set_ylabel('Value/Weight', fontsize=11)
+            ax.set_title(f'{title}\nApprox Ratio: {case["approx_ratio"]:.3f}', fontsize=12, fontweight='bold')
             ax.set_xticks(x)
-            ax.set_xticklabels(item_ids)
-            ax.legend()
+            ax.set_xticklabels(item_ids, fontsize=9)
+            ax.legend(fontsize=9)
+            ax.tick_params(labelsize=9)
             
             # 添加选择标记
             ax.text(0.02, 0.98, f'Red=DP Selected\nGreen=Collapse Selected',
@@ -483,16 +501,17 @@ class ComprehensiveVisualizer:
         
         scatter = ax13.scatter(zeta_values[:100], value_density[:100], 
                              c=colors[:100], alpha=0.6, s=50)
-        ax13.set_xlabel('Collapse Tension ζ')
-        ax13.set_ylabel('Value Density (Value/Weight)')
-        ax13.set_title('Value Density vs Tension Distribution (First 100 Items)')
+        ax13.set_xlabel('Collapse Tension ζ', fontsize=12)
+        ax13.set_ylabel('Value Density (Value/Weight)', fontsize=12)
+        ax13.set_title('Value Density vs Tension Distribution (First 100 Items)', fontsize=14, fontweight='bold')
         ax13.grid(True, alpha=0.3)
+        ax13.tick_params(labelsize=10)
         
         # 添加图例
         from matplotlib.patches import Patch
         legend_elements = [Patch(facecolor='red', label='Selected by Collapse'),
                           Patch(facecolor='blue', label='Not Selected')]
-        ax13.legend(handles=legend_elements)
+        ax13.legend(handles=legend_elements, fontsize=10)
         
         # 14. 算法性能雷达图
         ax14 = fig.add_subplot(gs[5, 0], projection='polar')
@@ -521,18 +540,19 @@ class ComprehensiveVisualizer:
         ax14.fill(angles, collapse_scores, alpha=0.25)
         
         ax14.set_xticks(angles[:-1])
-        ax14.set_xticklabels(categories)
+        ax14.set_xticklabels(categories, fontsize=10)
         ax14.set_ylim(0, 10)
-        ax14.set_title('Multi-dimensional Performance Comparison')
-        ax14.legend()
+        ax14.set_title('Multi-dimensional Performance Comparison', fontsize=14, fontweight='bold')
+        ax14.legend(fontsize=10)
         ax14.grid(True)
+        ax14.tick_params(labelsize=9)
         
         # 15. 理论验证：黄金比例
         ax15 = fig.add_subplot(gs[5, 1])
         phi = (1 + np.sqrt(5)) / 2
-        theoretical_bound = 1 - 1/np.sqrt(phi)
+        theoretical_bound = 1/np.sqrt(phi)
         
-        categories = ['Theoretical\nBound\n(1-1/√φ)', 'Experimental\nMean', 'Minimum', 'Maximum']
+        categories = ['Theoretical\nBound\n(1/√φ)', 'Experimental\nMean', 'Minimum', 'Maximum']
         values = [
             theoretical_bound,
             df['approx_ratio'].mean(),
@@ -543,9 +563,10 @@ class ComprehensiveVisualizer:
         
         bars = ax15.bar(categories, values, color=colors, alpha=0.7)
         ax15.axhline(theoretical_bound, color='red', linestyle='--', alpha=0.5)
-        ax15.set_ylabel('Approximation Ratio')
-        ax15.set_title('Approximation Ratio Statistics and Theory Validation')
+        ax15.set_ylabel('Approximation Ratio', fontsize=12)
+        ax15.set_title('Approximation Ratio Statistics and Theory Validation', fontsize=14, fontweight='bold')
         ax15.grid(True, alpha=0.3, axis='y')
+        ax15.tick_params(labelsize=10)
         
         # 添加数值标签
         for bar, val in zip(bars, values):
@@ -584,22 +605,25 @@ class ComprehensiveVisualizer:
                 else:
                     cell.set_facecolor('#f0f0f0' if i % 2 == 0 else 'white')
         
-        ax16.set_title('Algorithm Performance Summary', pad=20)
+        ax16.set_title('Algorithm Performance Summary', fontsize=14, fontweight='bold', pad=20)
         
         # 总标题
         plt.suptitle('01 Knapsack Problem: Dynamic Programming vs CollapseGPT Comprehensive Analysis\n'
                     'Based on "Self-referentially Complete Systems Necessarily Increase Entropy" Axiom',
-                    fontsize=16)
+                    fontsize=20, fontweight='bold', y=0.975)
         
         plt.tight_layout()
-        plt.savefig(save_path, dpi=300, bbox_inches='tight')
+        plt.subplots_adjust(top=0.92)  # 为总标题留出空间
+        plt.savefig(save_path, dpi=300, bbox_inches='tight', facecolor='white', 
+                   edgecolor='none', transparent=False)
         plt.show()
         
         print(f"\n综合分析图已保存到: {save_path}")
     
     def plot_case_study(self, result: Dict, save_path: str = 'case_study.png'):
         """详细案例研究"""
-        fig, axes = plt.subplots(2, 2, figsize=(15, 12))
+        fig, axes = plt.subplots(2, 2, figsize=(18, 14))
+        fig.subplots_adjust(hspace=0.35, wspace=0.35)
         
         items = result['items']
         n = len(items)
@@ -628,11 +652,12 @@ class ComprehensiveVisualizer:
                   c=['green' if cs else 'lightgreen' for cs in item_data['Collapse_Selected'][:display_items]], 
                   marker='s', s=50, label='Collapse Selection', alpha=0.7)
         
-        ax.set_xlabel('Item ID')
-        ax.set_ylabel('Value Density')
-        ax.set_title(f'Item Selection Comparison (First {display_items})')
-        ax.legend()
+        ax.set_xlabel('Item ID', fontsize=12)
+        ax.set_ylabel('Value Density', fontsize=12)
+        ax.set_title(f'Item Selection Comparison (First {display_items})', fontsize=14, fontweight='bold')
+        ax.legend(fontsize=11)
         ax.grid(True, alpha=0.3)
+        ax.tick_params(labelsize=10)
         
         # 2. φ-trace长度分布
         ax = axes[0, 1]
@@ -641,11 +666,12 @@ class ComprehensiveVisualizer:
         
         ax.hist(selected_lengths, bins=20, alpha=0.5, label='Selected', color='green')
         ax.hist(unselected_lengths, bins=20, alpha=0.5, label='Not Selected', color='red')
-        ax.set_xlabel('φ-trace Length')
-        ax.set_ylabel('Frequency')
-        ax.set_title('φ-trace Length Distribution')
-        ax.legend()
+        ax.set_xlabel('φ-trace Length', fontsize=12)
+        ax.set_ylabel('Frequency', fontsize=12)
+        ax.set_title('φ-trace Length Distribution', fontsize=14, fontweight='bold')
+        ax.legend(fontsize=11)
         ax.grid(True, alpha=0.3)
+        ax.tick_params(labelsize=10)
         
         # 3. 选择差异分析
         ax = axes[1, 0]
@@ -657,8 +683,8 @@ class ComprehensiveVisualizer:
         labels = ['DP Only', 'Collapse Only', 'Both Selected']
         colors = ['red', 'green', 'yellow']
         
-        ax.pie(venn_data, labels=labels, colors=colors, autopct='%1.1f%%', startangle=90)
-        ax.set_title('Selection Difference Analysis')
+        ax.pie(venn_data, labels=labels, colors=colors, autopct='%1.1f%%', startangle=90, textprops={'fontsize': 10})
+        ax.set_title('Selection Difference Analysis', fontsize=14, fontweight='bold')
         
         # 4. 性能指标
         ax = axes[1, 1]
@@ -691,16 +717,19 @@ class ComprehensiveVisualizer:
                 ax.text(collapse_norm + 0.02, i + width/2, f'{collapse_val:.1f}', va='center')
         
         ax.set_yticks(x)
-        ax.set_yticklabels(list(metrics.keys()))
-        ax.set_xlabel('Relative Value')
-        ax.set_title('Performance Metrics Comparison')
-        ax.legend()
+        ax.set_yticklabels(list(metrics.keys()), fontsize=10)
+        ax.set_xlabel('Relative Value', fontsize=12)
+        ax.set_title('Performance Metrics Comparison', fontsize=14, fontweight='bold')
+        ax.legend(fontsize=11)
         ax.grid(True, alpha=0.3, axis='x')
+        ax.tick_params(labelsize=10)
         
         plt.suptitle(f'Detailed Case Analysis (n={result["n_items"]}, Approx Ratio={result["approx_ratio"]:.3f})',
-                    fontsize=14)
+                    fontsize=16, fontweight='bold', y=0.98)
         plt.tight_layout()
-        plt.savefig(save_path, dpi=300, bbox_inches='tight')
+        plt.subplots_adjust(top=0.92)
+        plt.savefig(save_path, dpi=300, bbox_inches='tight', facecolor='white', 
+                   edgecolor='none', transparent=False)
         plt.show()
 
 
@@ -728,6 +757,10 @@ def main():
     df_results.to_csv('knapsack_experiment_results.csv', index=False)
     print(f"\n实验结果已保存到: knapsack_experiment_results.csv")
     
+    # 计算理论下界
+    phi = (1 + np.sqrt(5)) / 2
+    theoretical_bound = 1 / np.sqrt(phi)
+    
     # 基础统计
     print("\n" + "=" * 80)
     print("实验结果统计")
@@ -738,9 +771,9 @@ def main():
     print(f"   - 标准差: {df_results['approx_ratio'].std():.3f}")
     print(f"   - 最小值: {df_results['approx_ratio'].min():.3f}")
     print(f"   - 最大值: {df_results['approx_ratio'].max():.3f}")
-    print(f"   - 理论下界: 0.786")
+    print(f"   - 理论下界: {theoretical_bound:.3f}")
     
-    violations = len(df_results[df_results['approx_ratio'] < 0.786])
+    violations = len(df_results[df_results['approx_ratio'] < theoretical_bound])
     print(f"\n2. 理论验证:")
     print(f"   - 违反理论下界的案例: {violations}/{len(df_results)} ({violations/len(df_results)*100:.1f}%)")
     
